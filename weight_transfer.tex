@@ -387,7 +387,113 @@
 		\label{fig:tires_wet}
 	\end{figure}
 	
+	\subsection{Siły reakcji nawierzchni}
+	Siły działające na koła przedstawia się jako sumę sił oddziałujących na oba koła danej osi. Łączna wartość tych sił nazywana jest naciskiem osi. Rozważmy samochód stojący na powierzchni pochyłej (rysunek \ref{fig:rozklad_sil_pojazd}).
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{rozklad_sil_pojazd.jpg}
+		\caption{Samochód stojący na nawierzchni pochyłej \cite{Arczynski}.}
+		\label{fig:rozklad_sil_pojazd}
+	\end{figure}
+	Z równań momentów względem punktów styku otrzymujemy:
+	\begin{align}
+		Z_1=\frac{mg}{l}(l_2\cos \alpha -h\sin \alpha)\\
+		Z_2=\frac{mg}{l}(l_1\cos \alpha +h\sin \alpha)
+	\end{align}
+	
 	\section{Opory ruchu}
+	Podczas analizy ruchu pojazdu przyjmuje się następujące uproszczenia:
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{rozklad_kolo_toczone.jpg}
+		\caption{Rozkład sił i momentów działających na koło toczne \cite{Arczynski}.}
+		\label{fig:rozklad_kolo_toczone}
+	\end{figure}
+	\begin{itemize}
+		\item pomija się przesunięcie normalnej reakcji $Z$ (rys. \ref{fig:rozklad_kolo_toczone}), ponieważ błąd przy zwykłych pojazdach nie przekracza 1\%,
+		\item nie uwzględnia się transferu ciężaru przy przyspieszeniu – jednak w przypadku bolidów należy to brać pod uwagę ze względu na znacznie większe przyspieszenia niż w samochodach standardowych,
+		\item nie rozpatruje się oddzielnie oporów toczenia poszczególnych opon, lecz ich sumę.
+	\end{itemize}
+	Aby pojazd poruszał się ruchem jednostajnym prostoliniowym, musi być spełniony warunek:
+	\begin{align}
+		F_n-\sum F_{op}=0
+	\end{align}
+	gdzie:
+	\begin{align}
+		\sum F_{op}=F_t+F_p+F_w+F_b+F_s
+	\end{align}
+	Odpowiadają one kolejno siłom oporu: toczenia, powietrza, wzniesienia, bezwładności i skrętu.
+	
+	\subsection{Siła oporu toczenia}
+	Siłę oporu toczenia przyjmuje się jako sumę oporów wszystkich opon:
+	\begin{align}
+		F_t=mgf
+	\end{align}
+	gdzie $f$ oznacza współczynnik oporu toczenia.  
+	Współczynnik $f$ można zapisać wzorem:
+	\begin{align}
+		f=f_0(1+AV^2)
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $A$ – współczynnik zależny od nawierzchni: od $4.5\cdot10^{-5}$ dla dróg gładkich do $10\cdot 10^{-5}$ dla dróg wyboistych; dla nawierzchni asfaltowych i betonowych można przyjąć $A=5\cdot 10^{-5}$,
+		\item $V$ – prędkość liniowa pojazdu.
+	\end{itemize}
+	
+	\subsection{Siła oporu powietrza}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{rozklad_sil_powietrza.jpg}
+		\caption{Rozkład ciśnień powietrza na powierzchni samochodu \cite{Arczynski}.}
+		\label{fig:rozklad_sil_powietrza}
+	\end{figure}
+	Siłę oporu aerodynamicznego opisuje równanie:
+	\begin{align}
+		F_p=\frac{1}{2}\gamma v^2Ac_x
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $\gamma$ – gęstość powietrza (zależna od temperatury i wilgotności),
+		\item $A$ – powierzchnia czołowa pojazdu,
+		\item $c_x$ – współczynnik oporu aerodynamicznego,
+		\item $v$ – prędkość względna pojazdu względem powietrza.
+	\end{itemize}
+	W praktyce powierzchnię czołową bolidów lub wartość całkowitego współczynnika oporu można znaleźć w źródłach i wtedy równanie upraszcza się do:
+	\begin{align}
+		F_p=\frac{1}{2}kv^2
+	\end{align}
+	Przez prędkość względną rozumiemy prędkość pojazdu względem wiatru. Przy jeździe pod wiatr prędkość względna rośnie, natomiast z wiatrem maleje. W przypadku wiatru bocznego prędkości dodają się wektorowo. Wiatr boczny działa na pojazd siłą, która może wywołać moment obrotowy wpływający na sterowność pojazdu. W takich sytuacjach należy uwzględnić współczynnik aerodynamiczny $c_y$ oraz powierzchnię boczną $Y$.
+	
+	Przy modelowaniu bolida również istotne jest uwzględnienie siły nośniej naporu $W_p$ oraz docisk aerodynamiczny.
+	
+	Przy modelowaniu bolida istotne jest również uwzględnienie \textbf{siły nośnej naporu} $W_p$ oraz \textbf{docisku aerodynamicznego}, które znacząco wpływają na przyczepność kół i zachowanie pojazdu przy dużych prędkościach.
+	\subsection{Siła oporu wzniesienia}
+	Siła oporu wzniesienia przyjmuje wartości dodatnie, gdy pojazd jedzie pod górę, oraz ujemne, gdy zjeżdża w dół. Na rysunku \ref{rozklad_sil_wzniesienie} przedstawiono przypadek wjazdu pod górę.
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{rozklad_sil_wzniesienie.jpg}
+		\caption{Opór wzniesienia \cite{Arczynski}.}
+		\label{fig:rozklad_sil_wzniesienie}
+	\end{figure}
+	\begin{align}
+		F_w=mg\sin \alpha
+	\end{align}
+	Dla wzniesień do $12^{\circ}$ można przybliżać $\sin \alpha$ przez $\tan \alpha$, gdzie:
+	\begin{align}
+		\tan \alpha = \frac{h_s}{s}
+	\end{align}
+	(błąd wynosi do ok. 2\%). Wówczas wzór przyjmuje postać:
+	\begin{align}
+		F_w=mg\frac{h_s}{s}
+	\end{align}
+	
+	\subsection{Siła oporu bezwładności}
+	Trza zrobić ale to trudne
+	\subsection{Siła oporu skrętu}
+	\begin{align}
+		F_s=mgf_s
+	\end{align}
+	tu też trzeba coś dopisać
 	\bibliographystyle{apalike}
 	\bibliography{refs} 
 \end{document}
