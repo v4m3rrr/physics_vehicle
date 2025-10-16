@@ -3,20 +3,95 @@
 \usepackage{amsmath}
 \usepackage{bm}  % put in preamble
 \usepackage{empheq}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}   % Use T1 font encoding (supports Polish diacritics)
+\usepackage[utf8]{inputenc} % Allows UTF-8 encoded Polish letters
+\usepackage{url}
+
 \usetikzlibrary{arrows.meta,calc,decorations.pathreplacing}
 
-\title{Physics of vehicle dynamics}
+\title{Symulacja ruchu pojazdu}
 \author{v4m3rrr}
-\date{\today}
+
+\graphicspath{{images/}}
 
 \begin{document}
 	\maketitle
 	\tableofcontents
 	\newpage
-	\section{Weight transfer}
-	Weight transfer is a fundamental concept in vehicle dynamics that describes how the normal loads on the tires change when a vehicle accelerates, brakes, or turns. Although the total weight of the vehicle remains constant, the distribution of this weight among the tires shifts because of the inertia of the mass acting through the center of gravity.
 	
-	During cornering, the lateral acceleration produces a moment about the vehicle’s roll axis, causing additional load to be transferred from the inside wheels to the outside wheels. This lateral weight transfer affects the available tire grip on each side, influencing handling balance, cornering performance, and ultimately vehicle stability.
+	\section{Kinematyka pojazdu}
+	
+	Rozważmy ciało sztywne $M$ poruszające się ruchem dowolnym względem układu odniesienia $Ox'y'z'$, który sam porusza się względem stałego układu odniesienia $O_1xyz$. W tym kontekście punkt $O_1$ może reprezentować środek linii mety, chociaż w ogólności może być dowolnym stałym punktem w przestrzeni. Oznaczamy przez $O$ środek mas pojazdu, a przez $O'x''y''z''$ układ związany z określonym elementem pojazdu. Rysunek \ref{fig:rigid_body} ilustruje ogólny ruch pojazdu \cite{Leyko}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics{motion_rigid_body.png}
+		\caption{Ogólny ruch ciała sztywnego względem stałych i ruchomych układów odniesienia \cite{Leyko}.}
+		\label{fig:rigid_body}
+	\end{figure}
+	
+	Prędkość punktu na ciele sztywnym w stałym układzie odniesienia $O_1xyz$ można wyrazić jako:
+	\begin{align}
+		\vec{v} = \vec{v}_0 + \vec{\omega}e \times \vec{r'} + \vec{v}{r_0'} + \vec{\omega}_r \times \vec{r''},
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $\vec{v}_0$ jest prędkością początku ruchomego układu $Ox'y'z'$ względem stałego układu $O_1xyz$,
+		\item $\vec{\omega}e$ jest prędkością kątową ruchomego układu $Ox'y'z'$,
+		\item $\vec{r'}$ jest wektorem położenia punktu $A$ względem początku ruchomego układu $O$,
+		\item $\vec{v}{r_0'}$ jest prędkością ruchomego układu $O'x''y''z''$ względem ruchomego układu $Ox'y'z'$,
+		\item $\vec{\omega}_r$ jest prędkością kątową ruchomego układu $O'x''y''z''$,
+		\item $\vec{r}''$ jest wektorem położenia punktu $A$ względem układu $O'x''y''z''$.
+	\end{itemize}
+	
+	Podobnie, wektor położenia punktu $A$ w stałym układzie odniesienia $O_1xyz$ jest następujący:
+	\begin{align}
+		\vec{r} = \overrightarrow{O_1O} + \vec{r}'{O'} + \vec{r}'',
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $\overrightarrow{O_1O}$ jest wektorem położenia środka mas $O$ względem stałego układu $O_1xyz$,
+		\item $\vec{r}'{O'}$ jest wektorem położenia punktu $O'$ względem ruchomego układu $Ox'y'z'$,
+		\item $\vec{r}''$ jest wektorem położenia punktu $A$ względem układu $O'x''y''z''$.
+	\end{itemize}
+	
+	\section{Model koła}
+	
+	Zakładając, że koło ma charakterystykę częściowo sprężystą, natomiast nawierzchnia jest doskonale sprężysta (uwzględniając tylko asfalt i beton), strata energetyczna wynikająca z pracy opony (histereza) wynosi:
+	\begin{align}
+		\Delta A = A_1 - A_2,
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $\Delta A$ – strata energetyczna (histereza),
+		\item $A_1$ – praca włożona przy obciążeniu opony,
+		\item $A_2$ – praca zwracana przy odciążaniu opony.
+	\end{itemize}
+	
+	Przy tak przyjętej charakterystyce zawsze zachodzi nierówność $\Delta A > 0$, co oznacza, że $A_1 > A_2$.  
+	
+	W praktyce można przyjąć, że charakterystyka w zakresie ugięć jest liniowa, co oznacza, że promieniowa sztywność opony $k$ jest stała:
+	\begin{align}
+		Q = k \, \Delta z,
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $Q$ – obciążenie normalne koła,
+		\item $k$ – promieniowa sztywność opony,
+		\item $\Delta z$ – ugięcie normalne koła (zakłada się, że nawierzchnia się nie ugina).
+	\end{itemize}
+	
+	Praca odkształcenia opony wyraża się wzorem:
+	\begin{align}
+		\int_{z_1}^{z_2} Q \, dz &= \int_{z_1}^{z_2} k z \, dz = \left[ \frac{1}{2} k z^2 \right]_{z_1}^{z_2}.
+	\end{align}
+
+	\subsection{Transfer ciężaru}
+	Transfer ciężaru jest podstawową koncepcją w dynamice pojazdów, opisującą, jak zmieniają się siły normalne działające na opony podczas przyspieszania, hamowania lub skręcania pojazdu. Chociaż całkowita masa pojazdu pozostaje stała, rozkład ciężaru między opony ulega przesunięciu z powodu bezwładności masy działającej przez środek ciężkości \cite{Beckman}.
+	
+	Podczas pokonywania zakrętów przyspieszenie boczne wytwarza moment wokół osi przechyłu pojazdu, powodując dodatkowe przeniesienie obciążenia z kół wewnętrznych na koła zewnętrzne. Ten boczny transfer ciężaru wpływa na przyczepność opon po każdej stronie oddziałując na stabilność pojazdu.
+	
 	\begin{figure}[h]
 		\centering
 		\begin{tikzpicture}[scale=2.0, >=Stealth, every node/.style={font=\normalsize}]
@@ -73,7 +148,7 @@
 			\draw[very thick, ->] ($(WL)+(-1,0)$) -- ++(0,0.5) 
 			node[midway,right] {$\bm{y}$};
 		\end{tikzpicture}
-		\caption{Free body diagram of a car when stationary (viewed from behind).}
+		\caption{Schemat sił działających na samochód w stanie spoczynku (widok z tyłu).}
 		\label{fig:stationary}
 	\end{figure}
 	
@@ -138,80 +213,122 @@
 			\draw[very thick, ->] ($(WL)+(-1,0)$) -- ++(0,0.5) 
 			node[midway,right] {$\bm{y}$};
 		\end{tikzpicture}
-		\caption{Free body diagram of a car when turning to right (viewed from behind).}
+		\caption{Schemat sił działających na samochód podczas skrętu w prawo (widok z tyłu).}
 		\label{fig:turning}
 	\end{figure}
-	Since the body does not move in the vertical ($y$) direction, the vertical force balance is
+	Ponieważ ciało nie porusza się w kierunku pionowym ($y$), bilans sił pionowych jest następujący:
 	\begin{align}
-	W=N_L+N_R
-	\label{eq:y_equal}
+		W=N_L+N_P
+		\label{eq:y_equal}
 	\end{align}
-	where $W = mg$ is the total weight and $N_L$, $N_R$ are the left and right normal forces.
+	gdzie $W = mg$ to całkowity ciężar, a $N_L$, $N_P$ to siły normalne po lewej i prawej stronie.
 	
-	When the car moves along a curved path, a centripetal force is required:
+	Gdy samochód porusza się po zakrzywionej ścieżce, wymagana jest siła dośrodkowa:
 	\begin{align}
-		F_c=f_L+f_R
+		F_c=f_L+f_P
 		\label{eq:centrifugal}
 	\end{align}
-	where $f_L$ and $f_R$ are the lateral tire forces. The magnitude of this force is
+	gdzie $f_L$ i $f_P$ to boczne siły opon. Wartość tej siły wynosi
 	\begin{align}
-		F_c = \frac{mv^2}{r} = ma_l
+		F_c = \frac{mv^2}{r} = ma_b
 	\end{align}
-	with $a_l$ the lateral acceleration.
-	
-	Taking moments about the center of mass, the torque balance is
+	gdzie $a_b$ to przyspieszenie boczne. 
+	Biorąc momenty względem środka masy, bilans momentów jest następujący:
 	\begin{align}
-		\tau_{CM}=Wr_W+f_Lh+f_Rh+N_R\frac{w}{2}-N_L\frac{w}{2}
+		\tau_{SM}=Wr_{SM}+f_Lh+f_Ph+N_P\frac{w}{2}-N_L\frac{w}{2}
 	\end{align}
-	Since the weight acts through the center of mass ($r_W=0$) and assuming the vehicle does not tip ($\tau_{CM}=0$), we obtain
+	Ponieważ ciężar działa przez środek masy ($r_{SM}=0$) i zakładając, że pojazd się nie przewraca ($\tau_{SM}=0$), otrzymujemy:
 	\begin{align}
 		N_L = \frac{W}{2} + \frac{F_c h}{w}
 	\end{align}
-	Substituting $F_c = ma_l$ and $W=mg$ gives
+	Podstawiając $F_c = ma_b$ oraz $W=mg$ otrzymujemy:
 	\begin{align}
-		N_L = \frac{W}{2} + W \frac{a_l}{g}\frac{h}{w}
+		N_L = \frac{W}{2} + W \frac{a_b}{g}\frac{h}{w}
 	\end{align}
-	Defining the load transfer as
+	Definiując transfer obciążenia jako:
 	\begin{align}
-		\Delta W = W \frac{a_l}{g}\frac{h}{w}
+		\Delta W = W \frac{a_b}{g}\frac{h}{w}
 	\end{align}
-	the left and right wheel loads during a right-hand turn become
+	obciążenia kóła lewego i prawego podczas skrętu w prawo stają się:
 	\begin{empheq}[box=\fbox]{equation}
-		N_L = \frac{W}{2} + \Delta W, \quad 
-		N_R = \frac{W}{2} - \Delta W
+		N_L = \frac{W}{2} + \Delta W, \quad
+		N_P = \frac{W}{2} - \Delta W
 	\end{empheq}
-	and by symmetry, for a left-hand turn
+	i zgodnie z symetrią, dla skrętu w lewo:
 	\begin{empheq}[box=\fbox]{equation}
-		N_L = \frac{W}{2} - \Delta W \quad
-		N_R = \frac{W}{2} + \Delta W
+		N_L = \frac{W}{2} - \Delta W, \quad
+		N_P = \frac{W}{2} + \Delta W
 	\end{empheq}
 	
-	\section{Tire Adhesion}  
+	\subsection{Poślizg względny}
+	Poślizg względny wyraża się wzorem:
+	\begin{align}
+		S=\frac{v_p}{v_{pgr}}
+	\end{align}
+	gdzie:
+	\begin{itemize}
+		\item $S$ - poślizg względny; $S=0$ brak poślizgu, $S=1$ pełny poślizg,
+		\item $v_p$ - prędkość poślizgu koła
+		\item $v_{pgr} $ - prędkość graniczna poślizgu koła
+	\end{itemize}
+
+	Ruch koła stanowi sumę ruchu postępowego z prędkością $v$ oraz ruchu obrotowego z prękością kątową $\omega$. Rysunek \ref{fig:toczenie_kol_sztywengo_bez_poslizgu} przestawia ruch koła sztywengo na sztywnej powierzchni bez poślizgu. W tym przypadku poślizg względnu nie wystepuje. Droga przebyta przez koło jest równa sumie obrotów wykonanych przez koło i wyraża się wzorem
+	\begin{align}
+		s=2\pi rn
+	\end{align}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=1.5]{toczenie_kola_sztywnego_bez_poslizgu.jpg}
+		\caption{Toczenie się koła sztywnego bez poślizgu \cite{Arczynski}.}
+		\label{fig:toczenie_kol_sztywengo_bez_poslizgu}
+	\end{figure}
+	W przypadku kiedy koło jest napędzane i występuje poślizg $\omega r > v$ przestawia to rysunek \ref{fig:toczenie_kol_sztywengo_z_poslizgiem_napedzanie}.
+	Poślizg względny bedzie sie wyrażał wzorem
+	\begin{align}
+		S_n=\frac{v_p}{v_{pgr}}=\frac{v-r\omega}{-r\omega}=1-\frac{v}{r\omega}=1-\frac{r_t\omega}{r\omega}=1-\frac{r_t}{r}
+	\end{align}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=1.5]{toczenie_kola_sztywnego_z_poslizgiem_napedzanie.jpg}
+		\caption{Toczenie się koła sztywnego z poślizgiem (napędzanie)  \cite{Arczynski}.}
+		\label{fig:toczenie_kol_sztywengo_z_poslizgiem_napedzanie}
+	\end{figure}
+	Promień toczny przybiera wartości między zerem a $r$; gdy $r_t=0$, to $Sn=1$, gdy $r_t=r$, to $Sn=0$
+
 	
-	The force of tire adhesion can be expressed as:  
-	\begin{align}  
-		F \leq \mu N  
-	\end{align}  
+	W przypadku kiedy koło jest hamowane i występuje poślizg $\omega r < v$ przestawia to rysunek \ref{fig:toczenie_kol_sztywengo_z_poslizgiem_hamowanie}.
+	Poślizg względny bedzie sie wyrażał wzorem
+	\begin{align}
+		S_h=\frac{v_p}{v_{pgr}}=\frac{v-r\omega}{-r\omega}=1-\frac{v}{r\omega}=1-\frac{r\omega}{r_t\omega}=1-\frac{r}{r_t}
+	\end{align}
+		Promień toczny przybiera wartości między $r$ a nieskończonością; gdy $r_t=r$, to $Sn=0$, gdy $r_t=\infty$, to $Sn=0$
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=1.5]{toczenie_kola_sztywnego_z_poslizgiem_hamowanie.jpg}
+		\caption{Toczenie się koła sztywnego z poślizgiem (hamowanie)  \cite{Arczynski}.}
+		\label{fig:toczenie_kol_sztywengo_z_poslizgiem_hamowanie}
+	\end{figure}
 	
-	where:  
-	\begin{itemize}  
-		\item $\mu$ is the coefficient of adhesion,  
-		\item $N$ is the normal load (weight acting on the tire).  
-	\end{itemize}  
+	Znająć przebytą drogę koła $s$ oraz liczbę jego obrotów $n$ można wyznaczyć dla obu poślizgów promień toczenia $r_t$
+	\begin{align}
+		r_t=\frac{s}{2\pi n} 
+	\end{align}
+	a stąd poślizg.
+	Poślizg koła idealnie sztywnego można przyjąć jako dobre przybliżenie poślizgu koła częsciowo sprężystego.
+	\subsection{Przyczepność opon}
 	
-	The right-hand side of the inequality represents the maximum tractive or braking force that can be transmitted without slip. If this limit is exceeded, the tire transitions from static to kinetic friction, which results in loss of grip.  
+	Siłę przyczepności opony można wyrazić jako:
+	\begin{align}
+		F \leq \mu N = \sqrt{X^2 + Y^2}
+	\end{align}
 	
-	In practice, the coefficient of adhesion $\mu$ is not constant. It depends on several factors, including:  
-	\begin{itemize}  
-		\item Tire deformation and tread design,  
-		\item Temperature of both tire and road surface,  
-		\item Weather conditions (dry, wet, icy, snowy),  
-		\item Tire inflation pressure,  
-		\item Road texture and surface contamination (dust, oil, gravel, etc.).  
-	\end{itemize}  
-	
-	A well-designed tire ensures a smooth transition between static and kinetic friction so that grip is not lost suddenly, which is crucial for vehicle stability and safety.    
-	
+	gdzie:
+	\begin{itemize}
+		\item $\mu$ to współczynnik przyczepności,
+		\item $N$ to siła normalna (ciężar działający na oponę),
+		\item $X$ to siła podłużna,
+		\item $Y$ to siła boczna.
+	\end{itemize}
 	% Optional TikZ diagram for illustration:
 	\begin{figure}[h]
 		\centering
@@ -228,4 +345,50 @@
 		\caption{Forces acting on a tire in contact with the road.}
 	\end{figure}
 	
+	Prawa strona nierówności reprezentuje maksymalną siłę napędową lub hamującą, którą można przenieść bez poślizgu. Jeśli ten limit zostanie przekroczony, opona przechodzi od tarcia statycznego do kinetycznego, co skutkuje utratą przyczepności \cite{Arczynski}.
+	
+	W praktyce współczynnik przyczepności $\mu$ nie jest stały. Zależy od wielu czynników, w tym:
+	\begin{itemize}
+		\item Odkształcenia opony i wzoru bieżnika,
+		\item Temperatury opony i nawierzchni drogi,
+		\item Warunków pogodowych (sucho, mokro, lód, śnieg),
+		\item Ciśnienia w oponach,
+		\item Tekstury nawierzchni i jej zanieczyszczeń (kurz, olej, żwir itp.).
+	\end{itemize}
+	
+	Dobrze zaprojektowana opona zapewnia płynne przejście między tarciem statycznym a kinetycznym, tak aby przyczepność nie została utracona nagle, co jest kluczowe dla stabilności i bezpieczeństwa pojazdu. 
+	
+		\subsection{Oznaczenia opon F1}
+	
+	Od 2022 roku bolidy F1 korzystają z sześciu typów opon na suchą nawierzchnię, oznaczonych od C0 do C5, gdzie C0 są najtwardsze, a C5 najmiększe. Dodatkowo dostępne są dwa typy opon na mokrą nawierzchnię: opony przejściowe, używane, gdy na torze nie ma stojącej wody, oraz opony deszczowe, stosowane podczas intensywnych opadów.  
+	
+	Rysunek \ref{fig:tires_dry} przedstawia opony do suchej nawierzchni, natomiast rysunek \ref{fig:tires_wet} – do nawierzchni mokrej.
+	
+	Wymiary opon bolidów F1 podawane są w formacie: \textit{W/D-O} gdzie:
+	\begin{itemize}
+		\item $W$ – szerokość opony [mm],
+		\item $D$ – średnica opony [mm],
+		\item $O$ – średnica obręczy koła [cale].
+	\end{itemize}
+	
+	Dla bolidów F1 wymiary opon prezentują się następująco: przednie opony mają wymiary \textit{305/720-18}, a tylne \textit{405/720-18}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=0.25]{dry_tires.jpg}
+		\caption{Opony przeznaczone do warunków suchych (od lewej C0) \cite{tires}.}
+		\label{fig:tires_dry}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=0.25]{wet_tires.jpg}
+		\caption{Opony przeznaczone do warunków mokrych (od lewej opony przejściowe) \cite{tires}.}
+		\label{fig:tires_wet}
+	\end{figure}
+	
+	\section{Opory ruchu}
+	\bibliographystyle{apalike}
+	\bibliography{refs} 
 \end{document}
+
